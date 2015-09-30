@@ -20,8 +20,9 @@
     {% for vehicle in vehicles %}
         {#<li><a href="/vehicle/{{ vehicle.id }}/">{{ vehicle.auto_number }}</a></li>#}
         {% if vehicle.coordinates_set.last %}
-            <p id="lat">{{ vehicle.coordinates_set.last.lat }}</p>
-            <p id="lon">{{ vehicle.coordinates_set.last.lon }}</p>
+            <li><a data-timestamp="{{vehicle.coordinates_set.last.coordinate_timestamp}}" data-lat={{vehicle.coordinates_set.last.lat }} data-lon={{vehicle.coordinates_set.last.lon }} href="/vehicle/{{ vehicle.id }}/">{{ vehicle.auto_number }}</a></li>
+            <!--<p id="lat">{{ vehicle.coordinates_set.last.lat }}</p>-->
+            <!--<p id="lon">{{ vehicle.coordinates_set.last.lon }}</p>-->
         {% endif %}
         {% comment %}
         {% for q in vehicle.coordinates_set.all %}
@@ -37,35 +38,30 @@
 
 <script>
 function initMap() {
-    var lat = parseFloat(document.getElementById('lat').innerHTML),
-        lon = parseFloat(document.getElementById('lon').innerHTML);
-    console.log(lat);
-    console.log(lon);
-    var myLatLng = [{lat: lat, lng: lon},{lat:47.8303246,lng:35.1591682}];
-//    var myLatLng = {lat: 47.8308708, lng: 35.1567680};
+    var myLatLng = {lat:parseFloat(jQuery('a').first().data('lat')), lng:parseFloat(jQuery('a').first().data('lon'))};
 
   // Create a map object and specify the DOM element for display.
   var map = new google.maps.Map(document.getElementById('map'), {
-//    center: myLatLng,
-    center: myLatLng[0],
+    center: myLatLng,
     scrollwheel: false,
     zoom: 15
   });
-
-  // Create a marker and set its position.
-    myLatLng.forEach(function(element, index, array){
+    jQuery('a').each(function(){
          var marker = new google.maps.Marker({
             map: map,
-            position: element,
-            title: 'Hello World!'
+            position: {lat:parseFloat(jQuery(this).data("lat")), lng:parseFloat(jQuery(this).data("lon"))},
+            title: jQuery(this).text() +"\n"+ jQuery(this).data("timestamp")
          });
-        console.log(element);
+        console.log(jQuery(this).data("lat"));
+        console.log(jQuery(this).data("lon"));
+        console.log(jQuery(this).text());
     })
 
 }
 </script>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?callback=initMap">
 </script>
 </body>
 </html>
