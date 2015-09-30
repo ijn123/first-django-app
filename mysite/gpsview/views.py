@@ -7,6 +7,5 @@ def index(request):
     vehicles = Vehicles.objects.all()
     context = {'vehicles': vehicles}
     return render(request, 'index.html', context)
-
-def index2(request):
+def t2(request):
     return HttpResponse("Hello, world. You're at the index page.")

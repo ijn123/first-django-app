@@ -3,18 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
 </head>
 <body>
-<!--<h1>{{vehicles}}</h1>-->
 {% if vehicles %}
     <ul>
     {% for vehicle in vehicles %}
-        <li><a href="/vehicle/{{ vehicle.id }}/">{{ vehicle.auto_number }}</a></li>
+        {#<li><a href="/vehicle/{{ vehicle.id }}/">{{ vehicle.auto_number }}</a></li>#}
+        {% if vehicle.coordinates_set.last %}
+            <p id="lat">{{ vehicle.coordinates_set.last.lat }}</p>
+            <p id="lon">{{ vehicle.coordinates_set.last.lon }}</p>
+        {% endif %}
+        {% comment %}
+        {% for q in vehicle.coordinates_set.all %}
+            {{ q.lat }}
+        {% endfor %}
+        {% endcomment %}
     {% endfor %}
     </ul>
 {% else %}
     <p>No vehicles are available.</p>
 {% endif %}
+<div id="map"></div>
 
+<script>
+function initMap() {
+    var lat = parseFloat(document.getElementById('lat').innerHTML),
+        lon = parseFloat(document.getElementById('lon').innerHTML);
+    console.log(lat);
+    console.log(lon);
+    var myLatLng = [{lat: lat, lng: lon},{lat:47.8303246,lng:35.1591682}];
+//    var myLatLng = {lat: 47.8308708, lng: 35.1567680};
+
+  // Create a map object and specify the DOM element for display.
+  var map = new google.maps.Map(document.getElementById('map'), {
+//    center: myLatLng,
+    center: myLatLng[0],
+    scrollwheel: false,
+    zoom: 15
+  });
+
+  // Create a marker and set its position.
+    myLatLng.forEach(function(element, index, array){
+         var marker = new google.maps.Marker({
+            map: map,
+            position: element,
+            title: 'Hello World!'
+         });
+        console.log(element);
+    })
+
+}
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+</script>
 </body>
 </html>
